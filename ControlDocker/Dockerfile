@@ -78,7 +78,7 @@ RUN git submodule update --init --recursive
 RUN source /opt/ros/melodic/setup.bash && catkin build
 
 COPY ./rosCatkinEntrypoint.sh /
-COPY ./config /home/user/config-heifu0
+COPY ./config.bext /home/user/config.bext
 
 USER root
 RUN chmod +x /rosCatkinEntrypoint.sh
