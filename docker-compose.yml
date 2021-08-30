@@ -19,6 +19,7 @@ services:
       context: ./SimulationDocker
       args:
         GITHASH: ${TODAY}
+        CPU_CORE: ${CPU_CORE}
     image: heifu_simulation:latest
     networks:
       - ros
@@ -35,6 +36,7 @@ services:
       context: ./ControlDocker
       args:
         GITHASH: ${TODAY} #git log --pretty=format:'%h' -n 1)
+        CPU_CORE: ${CPU_CORE}
     image: heifu:latest
     networks:
       - ros
