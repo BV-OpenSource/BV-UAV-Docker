@@ -42,5 +42,5 @@ services:
       - ros
     environment:
       - "ROS_MASTER_URI=http://rosmaster:11311"
-    command: "roslaunch heifu-bringup heifu_bringup.launch argSimulation:=true --wait"
+    command: "roslaunch bev_uav_bringup bev_uav_bringup.launch argSimulation:=true --wait"
     #command: "roslaunch mavros apm.launch argNamespace:='heifu0' fcu_url:='udp://:14550@' --wait"

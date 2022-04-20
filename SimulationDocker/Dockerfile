@@ -32,6 +32,8 @@ RUN source /opt/ros/melodic/setup.bash && catkin_init_workspace && catkin build 
 RUN echo "source /home/user/catkin_ws/devel/setup.bash" >> /home/user/.bashrc
 
 RUN git config --global url."https://heifu:1_oQUkWQjxZSrHPm7NLP@gitlab.pdmfc.com/".insteadOf git@gitlab.pdmfc.com:
+RUN git config --global http.sslverify false
+RUN git config --global url."https://github.com/".insteadOf git://github.com/
 
 ENV HOME_WS /home/user
 ENV CATKIN_WS /home/user/catkin_ws
