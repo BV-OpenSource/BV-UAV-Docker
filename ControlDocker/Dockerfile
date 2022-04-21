@@ -26,7 +26,7 @@ RUN echo 'user ALL=(ALL:ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 RUN apt update -q
 RUN apt-get install -y ros-melodic-catkin python-catkin-tools
-RUN apt-get install -y ros-melodic-joy ros-melodic-joy-teleop ros-melodic-mavlink libgeographic-dev ros-melodic-geographic-msgs gdal-bin libgdal-dev wget geographiclib-tools libgeographic-dev gstreamer1.0-tools libgstreamer1.0-dev
+RUN apt-get install -y ros-melodic-joy ros-melodic-joy-teleop ros-melodic-mavlink libgeographic-dev ros-melodic-geographic-msgs gdal-bin libgdal-dev wget geographiclib-tools libgeographic-dev gstreamer1.0-tools libgstreamer1.0-dev ros-melodic-mavros
 RUN wget https://gitlab.pdmfc.com/drones/ros1/heifu/-/raw/master/heifu_scripts_firmware/loader.py
 RUN cp loader.py /opt/ros/melodic/lib/python2.7/dist-packages/roslaunch/
 
@@ -36,19 +36,23 @@ RUN echo "source /opt/ros/melodic/setup.bash" >> /home/user/.bashrc
 RUN mkdir -p /home/user/catkin_ws/src
 WORKDIR /home/user/catkin_ws/
 RUN cat ~/.bashrc
-RUN source /opt/ros/melodic/setup.bash && catkin_init_workspace && catkin build
+ARG CPU_CORE
+RUN source /opt/ros/melodic/setup.bash && catkin_init_workspace && catkin build -j $CPU_CORE
 RUN echo "source /home/user/catkin_ws/devel/setup.bash" >> /home/user/.bashrc
 
 RUN git config --global url."https://heifu:1_oQUkWQjxZSrHPm7NLP@gitlab.pdmfc.com/".insteadOf git@gitlab.pdmfc.com:
+RUN git config --global user.email "docker@beyond-vision.pt"
+RUN git config --global user.name "Docker"
+RUN git config --global http.sslVerify false
+
 
 WORKDIR /home/user/catkin_ws/src
-RUN git clone git@gitlab.pdmfc.com:drones/ros1/heifu-uav/heifu.git
+RUN git clone git@gitlab.pdmfc.com:drones/ros1/heifu-uav/heifu.git -b dev
 WORKDIR /home/user/catkin_ws/src/heifu
-RUN git checkout origin/newVersion
 RUN git submodule update --init --recursive
 
 USER root
-RUN ./control/mavros/mavros/scripts/install_geographiclib_datasets.sh
+RUN /opt/ros/melodic/lib/mavros/install_geographiclib_datasets.sh
 USER user
 
 ENV HOME_WS /home/user
@@ -56,7 +60,7 @@ ENV CATKIN_WS /home/user/catkin_ws
 ENV ROS_DISTRO melodic
 ENV USER user
 
-WORKDIR /home/user/catkin_ws/src/heifu/interface/gcs-interface
+WORKDIR /home/user/catkin_ws/src/heifu/bev_uav_interface/bev_uav_gcs_interface
 RUN python -m pip install -r requirements.txt
 RUN python -m pip install pygdal==2.2.3.6
 RUN mkdir -p /home/user/Desktop/logs
@@ -64,21 +68,29 @@ RUN mkdir -p /home/user/Desktop/logs
 RUN git fetch
 WORKDIR /home/user/catkin_ws/src/heifu
 RUN git fetch
-RUN git pull origin newVersion
+RUN git checkout dev
+RUN git pull origin dev
 RUN git submodule update --init --recursive
 
-RUN catkin config --blacklist collision_avoidance gpu_voxels_ros planner planners_manager rrt
+RUN catkin config --blacklist bev_uav_collision_avoidance gpu_voxels_ros bev_uav_planner bev_uav_planners_manager bev_uav_rrt
 RUN source /opt/ros/melodic/setup.bash && catkin build
 
 ARG GITHASH
 RUN echo $GITHASH
 RUN git fetch
-RUN git pull origin newVersion
+RUN git pull origin dev
 RUN git submodule update --init --recursive
+# WORKDIR /home/user/catkin_ws/src/heifu/bev_uav_utils/bev_uav_msgs
+# RUN git checkout dev
+# WORKDIR /home/user/catkin_ws/src/heifu/bev_uav_interface/bev_uav_gcs_interface
+# RUN git checkout dev
+#WORKDIR /home/user/catkin_ws/src/heifu/bev_uav_control/bev_uav_priority_manager
+#RUN git checkout Online_control
+WORKDIR /home/user/catkin_ws/src/heifu
 RUN source /opt/ros/melodic/setup.bash && catkin build
 
 COPY ./rosCatkinEntrypoint.sh /
-COPY ./config /home/user/config-heifu0
+COPY ./config.bext /home/user/config.bext
 
 USER root
 RUN chmod +x /rosCatkinEntrypoint.sh

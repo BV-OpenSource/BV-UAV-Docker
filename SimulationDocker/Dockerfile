@@ -27,10 +27,13 @@ RUN echo "source /opt/ros/melodic/setup.bash" >> /home/user/.bashrc
 RUN mkdir -p /home/user/catkin_ws/src
 WORKDIR /home/user/catkin_ws/
 RUN cat ~/.bashrc
-RUN source /opt/ros/melodic/setup.bash && catkin_init_workspace && catkin build
+ARG CPU_CORE
+RUN source /opt/ros/melodic/setup.bash && catkin_init_workspace && catkin build -j $CPU_CORE
 RUN echo "source /home/user/catkin_ws/devel/setup.bash" >> /home/user/.bashrc
 
 RUN git config --global url."https://heifu:1_oQUkWQjxZSrHPm7NLP@gitlab.pdmfc.com/".insteadOf git@gitlab.pdmfc.com:
+RUN git config --global http.sslverify false
+RUN git config --global url."https://github.com/".insteadOf git://github.com/
 
 ENV HOME_WS /home/user
 ENV CATKIN_WS /home/user/catkin_ws
@@ -53,14 +56,14 @@ RUN git fetch
 RUN git pull origin melodic-dev
 RUN git fetch
 RUN git submodule update --init --recursive
-RUN source /opt/ros/melodic/setup.bash && catkin build
+RUN source /opt/ros/melodic/setup.bash && catkin build -j $CPU_CORE
 
 ARG GITHASH
 RUN echo $GITHASH
 RUN git fetch
 RUN git pull origin melodic-dev
 RUN git submodule update --init --recursive
-RUN source /opt/ros/melodic/setup.bash && catkin build
+RUN source /opt/ros/melodic/setup.bash && catkin build -j $CPU_CORE
 
 COPY ./rosCatkinEntrypoint.sh /
 

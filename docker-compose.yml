@@ -19,13 +19,14 @@ services:
       context: ./SimulationDocker
       args:
         GITHASH: ${TODAY}
+        CPU_CORE: ${CPU_CORE}
     image: heifu_simulation:latest
     networks:
       - ros
     environment:
       - "ROS_MASTER_URI=http://rosmaster:11311"
     tty: true
-    command: "roslaunch simulation_bringup heifu_simulation.launch argVehicle:='SimpleSim' argLaunchGazeboGUI:=false argOutputIP:='wpManager' argOutputPort:='14550' --wait"
+    command: "roslaunch simulation_bringup heifu_simulation.launch argLaunchGazeboGUI:=false argOutputIP:='wpManager' argOutputPort:='14550' --wait"
     # command: "sim_vehicle.py -v ArduCopter -m '--out wpManager:14550'"
 
 
@@ -35,10 +36,11 @@ services:
       context: ./ControlDocker
       args:
         GITHASH: ${TODAY} #git log --pretty=format:'%h' -n 1)
+        CPU_CORE: ${CPU_CORE}
     image: heifu:latest
     networks:
       - ros
     environment:
       - "ROS_MASTER_URI=http://rosmaster:11311"
-    command: "roslaunch heifu-bringup heifu_bringup.launch argSimulation:=true --wait"
+    command: "roslaunch bev_uav_bringup bev_uav_bringup.launch argSimulation:=true --wait"
     #command: "roslaunch mavros apm.launch argNamespace:='heifu0' fcu_url:='udp://:14550@' --wait"
