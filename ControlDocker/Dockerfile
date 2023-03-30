@@ -27,6 +27,7 @@ RUN echo 'user ALL=(ALL:ALL) NOPASSWD:ALL' >> /etc/sudoers
 RUN apt update -q
 RUN apt-get install -y ros-melodic-catkin python-catkin-tools
 RUN apt-get install -y ros-melodic-joy ros-melodic-joy-teleop ros-melodic-mavlink libgeographic-dev ros-melodic-geographic-msgs gdal-bin libgdal-dev wget geographiclib-tools libgeographic-dev gstreamer1.0-tools libgstreamer1.0-dev ros-melodic-mavros
+RUN apt install python-gst-1.0 -y
 RUN wget https://gitlab.pdmfc.com/drones/ros1/heifu/-/raw/master/heifu_scripts_firmware/loader.py
 RUN cp loader.py /opt/ros/melodic/lib/python2.7/dist-packages/roslaunch/
 
@@ -80,12 +81,6 @@ RUN echo $GITHASH
 RUN git fetch
 RUN git pull origin dev
 RUN git submodule update --init --recursive
-# WORKDIR /home/user/catkin_ws/src/heifu/bev_uav_utils/bev_uav_msgs
-# RUN git checkout dev
-# WORKDIR /home/user/catkin_ws/src/heifu/bev_uav_interface/bev_uav_gcs_interface
-# RUN git checkout dev
-#WORKDIR /home/user/catkin_ws/src/heifu/bev_uav_control/bev_uav_priority_manager
-#RUN git checkout Online_control
 WORKDIR /home/user/catkin_ws/src/heifu
 RUN source /opt/ros/melodic/setup.bash && catkin build
 
