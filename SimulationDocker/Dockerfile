@@ -34,6 +34,7 @@ RUN echo "source /home/user/catkin_ws/devel/setup.bash" >> /home/user/.bashrc
 RUN git config --global url."https://docker:glpat-UJtf_rx2k4B6rzXWrUv4@gitlab.pdmfc.com/".insteadOf git@gitlab.pdmfc.com:
 RUN git config --global http.sslverify false
 RUN git config --global url."https://github.com/".insteadOf git://github.com/
+RUN git config --global url."https://github.com/".insteadOf git@github.com:
 
 ENV HOME_WS /home/user
 ENV CATKIN_WS /home/user/catkin_ws
