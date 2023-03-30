@@ -8,3 +8,5 @@ if %CPU% LSS 4 (
 )
 
 docker-compose up --build
+
+pause
