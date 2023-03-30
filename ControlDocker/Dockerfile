@@ -27,6 +27,7 @@ RUN echo 'user ALL=(ALL:ALL) NOPASSWD:ALL' >> /etc/sudoers
 RUN apt update -q
 RUN apt-get install -y ros-melodic-catkin python-catkin-tools
 RUN apt-get install -y ros-melodic-joy ros-melodic-joy-teleop ros-melodic-mavlink libgeographic-dev ros-melodic-geographic-msgs gdal-bin libgdal-dev wget geographiclib-tools libgeographic-dev gstreamer1.0-tools libgstreamer1.0-dev ros-melodic-mavros
+RUN apt install python-gst-1.0 -y
 RUN wget https://gitlab.pdmfc.com/drones/ros1/heifu/-/raw/master/heifu_scripts_firmware/loader.py
 RUN cp loader.py /opt/ros/melodic/lib/python2.7/dist-packages/roslaunch/
 
@@ -40,7 +41,7 @@ ARG CPU_CORE
 RUN source /opt/ros/melodic/setup.bash && catkin_init_workspace && catkin build -j $CPU_CORE
 RUN echo "source /home/user/catkin_ws/devel/setup.bash" >> /home/user/.bashrc
 
-RUN git config --global url."https://heifu:1_oQUkWQjxZSrHPm7NLP@gitlab.pdmfc.com/".insteadOf git@gitlab.pdmfc.com:
+RUN git config --global url."https://docker:glpat-UJtf_rx2k4B6rzXWrUv4@gitlab.pdmfc.com/".insteadOf git@gitlab.pdmfc.com:
 RUN git config --global user.email "docker@beyond-vision.pt"
 RUN git config --global user.name "Docker"
 RUN git config --global http.sslVerify false
@@ -80,12 +81,6 @@ RUN echo $GITHASH
 RUN git fetch
 RUN git pull origin dev
 RUN git submodule update --init --recursive
-# WORKDIR /home/user/catkin_ws/src/heifu/bev_uav_utils/bev_uav_msgs
-# RUN git checkout dev
-# WORKDIR /home/user/catkin_ws/src/heifu/bev_uav_interface/bev_uav_gcs_interface
-# RUN git checkout dev
-#WORKDIR /home/user/catkin_ws/src/heifu/bev_uav_control/bev_uav_priority_manager
-#RUN git checkout Online_control
 WORKDIR /home/user/catkin_ws/src/heifu
 RUN source /opt/ros/melodic/setup.bash && catkin build
 
