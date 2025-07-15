@@ -27,7 +27,7 @@ RUN echo 'user ALL=(ALL:ALL) NOPASSWD:ALL' >> /etc/sudoers
 RUN apt update -q
 RUN apt-get install -y ros-noetic-catkin python3-catkin-tools
 RUN apt-get install -y ros-noetic-joy ros-noetic-joy-teleop ros-noetic-mavlink libgeographic-dev ros-noetic-geographic-msgs gdal-bin libgdal-dev wget geographiclib-tools libgeographic-dev gstreamer1.0-tools libgstreamer1.0-dev ros-noetic-mavros ros-noetic-ntpd-driver ros-noetic-vision-msgs
-RUN apt install -y python3-gst-1.0 libgstrtspserver-1.0
+RUN apt-get install -y -q python3-gst-1.0 libgstrtspserver-1.0
 #RUN wget https://gitlab.pdmfc.com/drones/ros1/heifu/-/raw/master/heifu_scripts_firmware/loader.py
 #RUN cp loader.py /opt/ros/noetic/lib/python3/dist-packages/roslaunch/
 
