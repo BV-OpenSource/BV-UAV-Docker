@@ -1,5 +1,5 @@
 #FROM phusion/baseimage:master-amd64 as base
-FROM ubuntu:18.04 as base
+FROM ubuntu:20.04 as base
 
 SHELL ["/bin/bash", "-c"]
 
@@ -11,34 +11,35 @@ RUN apt-get install lsb-core -y -q
 RUN sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
 RUN curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add -
 RUN apt update -q
-RUN apt install ros-melodic-desktop-full -y -q
-RUN apt install python-rosdep python-rosinstall python-rosinstall-generator python-wstool build-essential -y -q
-RUN /bin/bash -c "source /opt/ros/melodic/setup.bash"
+RUN DEBIAN_FRONTEND=noninteractive apt install ros-noetic-desktop -y -q
+RUN apt install python3-rosdep python3-rosinstall python3-rosinstall-generator python3-wstool build-essential -y -q
+RUN apt install -y -q libgazebo11-dev gazebo11 ros-noetic-gazebo-ros-pkgs ros-noetic-gazebo-ros-control
+RUN /bin/bash -c "source /opt/ros/noetic/setup.bash"
 RUN rosdep init
 
 RUN adduser --disabled-password -q user
 RUN echo 'user ALL=(ALL:ALL) NOPASSWD:ALL' >> /etc/sudoers
 
-RUN apt-get install -y ros-melodic-catkin python-catkin-tools
+RUN apt-get install -y ros-noetic-catkin python3-catkin-tools
 
 USER user
 RUN rosdep update
-RUN echo "source /opt/ros/melodic/setup.bash" >> /home/user/.bashrc
+RUN echo "source /opt/ros/noetic/setup.bash" >> /home/user/.bashrc
 RUN mkdir -p /home/user/catkin_ws/src
 WORKDIR /home/user/catkin_ws/
 RUN cat ~/.bashrc
 ARG CPU_CORE
-RUN source /opt/ros/melodic/setup.bash && catkin_init_workspace && catkin build -j $CPU_CORE
+RUN source /opt/ros/noetic/setup.bash && catkin_init_workspace && catkin build -j $CPU_CORE
 RUN echo "source /home/user/catkin_ws/devel/setup.bash" >> /home/user/.bashrc
 
-RUN git config --global url."https://docker:glpat-UJtf_rx2k4B6rzXWrUv4@gitlab.pdmfc.com/".insteadOf git@gitlab.pdmfc.com:
+RUN git config --global url."https://docker:gldt-bBcdv48kNdpsWc67Exib@gitlab.pdmfc.com/".insteadOf git@gitlab.pdmfc.com:
 RUN git config --global http.sslverify false
-RUN git config --global url."https://github.com/".insteadOf git://github.com/
+RUN git config --global url."https://github".insteadOf git://github
 RUN git config --global url."https://github.com/".insteadOf git@github.com:
 
 ENV HOME_WS /home/user
 ENV CATKIN_WS /home/user/catkin_ws
-ENV ROS_DISTRO melodic
+ENV ROS_DISTRO noetic
 ENV USER user
 
 WORKDIR /home/user/catkin_ws/src
@@ -57,14 +58,14 @@ RUN git fetch
 RUN git pull origin melodic-dev
 RUN git fetch
 RUN git submodule update --init --recursive
-RUN source /opt/ros/melodic/setup.bash && catkin build -j $CPU_CORE
+RUN source /opt/ros/noetic/setup.bash && catkin build -j $CPU_CORE
 
 ARG GITHASH
 RUN echo $GITHASH
 RUN git fetch
 RUN git pull origin melodic-dev
 RUN git submodule update --init --recursive
-RUN source /opt/ros/melodic/setup.bash && catkin build -j $CPU_CORE
+RUN source /opt/ros/noetic/setup.bash && catkin build -j $CPU_CORE
 
 COPY ./rosCatkinEntrypoint.sh /
 
